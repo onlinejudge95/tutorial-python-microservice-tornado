@@ -41,3 +41,42 @@ And, run `mypy` by either of the following:
 $ mypy addrservice tests
 $ ./run.py typecheck
 ```
+
+## Unit Tests, Mocking, Code Coverage
+
+Take a look at the `AbstractAddressBookDB` in `addrservice/addressbook_db.py`. It implents a simple abstraction of CRUD fuctions for address book. Notice that all CRUD functions are `async`, i.e. the caller must `await` on them.
+
+`InMemoryAddressBookDB` is an in-memory DB implementation of this abstraction. Such implementation comes handy to run and debug unit tests.
+
+In real world, the DB is a remote data store like MySQL, PostgreSQL, MongoDB etc., or some key-value or graph store depending on the need. Setting up and using such remote data store is outside the scope of this tutorial. But to demonstrate how to mock _only_ the calls to database connecter, `SQLAddressBookDB` is a limited implementation of `AbstractAddressBookDB`. It assumes that any SQL DB connector will have function to execute queries, which unit tests must mock.
+
+The unit tests for these are in `tests/unit/addressbook_db_test.py`, which can be run with `run.py`:
+```
+$ ./run.py test
+```
+
+Next step is to check the code coverage:
+```
+$ coverage run --source=addrservice --branch ./run.py test
+$ coverage report
+Name                            Stmts   Miss Branch BrPart  Cover
+-----------------------------------------------------------------
+addrservice/__init__.py             6      0      0      0   100%
+addrservice/addressbook_db.py      79      9     10      1    89%
+-----------------------------------------------------------------
+TOTAL                              85      9     10      1    89%
+```
+
+To see coverage reports in HTML:
+```
+$ coverage html
+$ open htmlcov/index.html
+```
+
+Click on the link to coverage report for `addrservice/addressbook_db.py`, and examine lines that are not covered.
+
+### Exercise
+
+Implement `SQLAddressBookDB.get_all_addresses()` function in `addrservice/addressbook_db.py` and its test in `tests/unit/addressbook_db_test.py`. Generate and examine the code coverage report.
+
+**Bonus Problem:** Hook `SQLAddressBookDB` to `asyncpg` or any other SQL DB connector.
