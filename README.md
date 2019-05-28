@@ -80,3 +80,10 @@ Click on the link to coverage report for `addrservice/addressbook_db.py`, and ex
 Implement `SQLAddressBookDB.get_all_addresses()` function in `addrservice/addressbook_db.py` and its test in `tests/unit/addressbook_db_test.py`. Generate and examine the code coverage report.
 
 **Bonus Problem:** Hook `SQLAddressBookDB` to `asyncpg` or any other SQL DB connector.
+
+
+## Microservice
+
+File `addrservice/servive.py` has REST microservice post, get, put, delete functions for address. This file is indpendent of any web service framework. While it appears simple because there is only one data store, but in reality a service can interact with multiple data sources and other services (such as auth). Defining a service interface without mixing nitty-gritty of a web service framework not just prevents perculation of chosen framework dependencies across the system, but also this layered approach makes it easy to isolate bugs.
+
+Having an in-memory database facilates better integration testing because asserts can test the state of the database. Integration tests for service are in `tests/integration/addressservice_test.py`.

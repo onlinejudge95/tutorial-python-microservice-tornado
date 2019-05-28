@@ -119,6 +119,13 @@ class SQLAddressBookDBTest(asynctest.TestCase):
 
         self.assertEqual(sql_execute_fn.call_count, 4)
 
+    @asynctest.fail_on(active_handles=True)
+    async def test_read_all_addresses(self) -> None:
+        # TODO: Exercise: implement this function and update mock/patch
+        # annotations and # parameters of this function, and implement
+        # suitable asserts to test SQLAddressBookDB.read_all_addresses
+        pass
+
 
 if __name__ == '__main__':
     unittest.main()

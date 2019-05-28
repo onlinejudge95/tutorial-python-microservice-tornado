@@ -136,7 +136,8 @@ class SQLAddressBookDB(AbstractAddressBookDB):
         await self.db_connector.execute(query)
 
     async def read_all_addresses(self) -> Dict[str, Dict]:
-        # TODO: Exercise to implement
+        # TODO: Exercise: implement suitable query/abstraction and update
+        # the SQLAddressBookDBTest.test_read_all_addresses to test this.
         raise NotImplementedError()
 
 
