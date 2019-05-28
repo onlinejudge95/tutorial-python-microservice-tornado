@@ -1,0 +1,50 @@
+{
+    "name": "Rahul Gandhi",
+    "addresses": [
+        {
+            "kind": "work",
+            "buildingName": "Indian National Congress Office",
+            "streetNumber": 24,
+            "streetName": "Akbar Rd",
+            "city": "New Delhi",
+            "pincode": 110011,
+            "country": "India"
+        },
+        {
+            "kind": "home",
+            "streetNumber": 12,
+            "streetName": "Tughlak Lane",
+            "city": "New Delhi",
+            "pincode": 110011,
+            "country": "India"
+        }
+    ],
+    "phoneNumbers": [
+        {
+            "kind": "work",
+            "countryCode": 91,
+            "areaCode": 11,
+            "number": 23795161
+        }
+    ],
+    "faxNumbers": [
+        {
+            "kind": "work",
+            "countryCode": 91,
+            "areaCode": 11,
+            "number": 23012410
+        },
+        {
+            "kind": "work",
+            "countryCode": 91,
+            "areaCode": 11,
+            "number": 23012410
+        }
+    ],
+    "emails": [
+        {
+            "kind": "work",
+            "value": "office@rahulgandhi.in"
+        }
+    ]
+}

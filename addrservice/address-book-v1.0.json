@@ -1,0 +1,141 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Schema of an address book",
+    "definitions": {
+        "kind": {
+            "type": "string",
+            "enum": [
+                "home",
+                "work"
+            ]
+        },
+        "address": {
+            "type": "object",
+            "properties": {
+                "kind": {
+                    "$ref": "#/definitions/kind"
+                },
+                "buildingName": {
+                    "type": "string"
+                },
+                "unitNumber": {
+                    "type": "number"
+                },
+                "streetNumber": {
+                    "type": [
+                        "number",
+                        "string"
+                    ]
+                },
+                "streetName": {
+                    "type": "string"
+                },
+                "locality": {
+                    "type": "string"
+                },
+                "city": {
+                    "type": "string"
+                },
+                "state": {
+                    "type": "string"
+                },
+                "pincode": {
+                    "type": "number"
+                },
+                "country": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "kind",
+                "streetName",
+                "pincode",
+                "country"
+            ],
+            "additionalProperties": false
+        },
+        "phone": {
+            "type": "object",
+            "properties": {
+                "kind": {
+                    "$ref": "#/definitions/kind"
+                },
+                "countryCode": {
+                    "type": "number"
+                },
+                "areaCode": {
+                    "type": "number"
+                },
+                "number": {
+                    "type": "number"
+                }
+            },
+            "required": [
+                "kind",
+                "countryCode",
+                "number"
+            ],
+            "additionalProperties": false
+        },
+        "email": {
+            "type": "object",
+            "properties": {
+                "kind": {
+                    "$ref": "#/definitions/kind"
+                },
+                "value": {
+                    "type": "string",
+                    "format": "email"
+                }
+            },
+            "required": [
+                "kind",
+                "value"
+            ],
+            "additionalProperties": false
+        },
+        "addressEntry": {
+            "$id": "#addressEntry",
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "addresses": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "$ref": "#/definitions/address"
+                    }
+                },
+                "phoneNumbers": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "$ref": "#/definitions/phone"
+                    }
+                },
+                "faxNumbers": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "$ref": "#/definitions/phone"
+                    }
+                },
+                "emails": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "$ref": "#/definitions/email"
+                    }
+                }
+            },
+            "required": [
+                "name"
+            ],
+            "additionalProperties": false
+        }
+    },
+
+    "$ref": "#/definitions/addressEntry"
+}
