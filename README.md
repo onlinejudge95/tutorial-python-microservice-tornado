@@ -87,3 +87,7 @@ Implement `SQLAddressBookDB.get_all_addresses()` function in `addrservice/addres
 File `addrservice/servive.py` has REST microservice post, get, put, delete functions for address. This file is indpendent of any web service framework. While it appears simple because there is only one data store, but in reality a service can interact with multiple data sources and other services (such as auth). Defining a service interface without mixing nitty-gritty of a web service framework not just prevents perculation of chosen framework dependencies across the system, but also this layered approach makes it easy to isolate bugs.
 
 Having an in-memory database facilates better integration testing because asserts can test the state of the database. Integration tests for service are in `tests/integration/addressservice_test.py`.
+
+[Tornado](https://www.tornadoweb.org/) is a framework to develop Python web/microservices. It uses async effectively to achieve high number of open connections. In this tutorial, we create a `tornado.web.Application` and add `tornado.web.RequestHandlers` in file `addrservice/app.py` to serve various API endpoints for this address service. Tornado also has a rich framework for testing.
+
+Web services return HTML back. In address book microservice, API data interface is JSON. We will examine key Tornado APIs of `Application`, `RequestHandler` and `tornado.testing` to develop it.
