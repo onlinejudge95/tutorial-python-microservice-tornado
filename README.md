@@ -91,3 +91,46 @@ Having an in-memory database facilates better integration testing because assert
 [Tornado](https://www.tornadoweb.org/) is a framework to develop Python web/microservices. It uses async effectively to achieve high number of open connections. In this tutorial, we create a `tornado.web.Application` and add `tornado.web.RequestHandlers` in file `addrservice/app.py` to serve various API endpoints for this address service. Tornado also has a rich framework for testing.
 
 Web services return HTML back. In address book microservice, API data interface is JSON. We will examine key Tornado APIs of `Application`, `RequestHandler` and `tornado.testing` to develop it.
+
+But first, let's run the server and test it:
+
+```
+$ python3 addrservice/server.py --config ./configs/addressbook-local.yaml --debug
+Starting Address Book on port 8080 ...
+
+```
+
+Test the health and readiness endpoints (needed in most cloud service orchestrators like Kubernetes):
+
+`GET /health`:
+```
+$ curl -X 'GET' http://localhost:8080/healthz
+{"uptime": 184852}
+``` 
+
+`GET /readiness`:
+```
+$ curl -X 'GET' http://localhost:8080/readiness
+{"ready": true, "uptime": 292907}
+```
+
+Also run lint, typecheck and test to verify nothing is broken, and also code coverage:
+```
+$ ./run.py lint
+$ ./run.py typecheck
+$ ./run.py test -v
+$ coverage run --source=addrservice --branch ./run.py test
+$ coverage report
+Name                            Stmts   Miss Branch BrPart  Cover
+-----------------------------------------------------------------
+addrservice/__init__.py             6      0      0      0   100%
+addrservice/addressbook_db.py      85      7     13      1    92%
+addrservice/app.py                 28      3      0      0    89%
+addrservice/server.py              45     45      4      0     0%
+addrservice/service.py             28      0      0      0   100%
+addrservice/utils.py                3      0      0      0   100%
+-----------------------------------------------------------------
+TOTAL                             195     55     17      1    72%
+```
+
+You might notice that there is no code coverage of `addrservice/server.py`, this is the file used to start the server. Since Torando test framework has a mechanism to start the server in the same process where tests are running, this file does not get tested by unit and integration tests. Coverage of `addrservice/app.py` will improve as you finish exercises.
