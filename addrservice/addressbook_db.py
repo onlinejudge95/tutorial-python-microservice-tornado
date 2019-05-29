@@ -19,8 +19,8 @@ class AbstractAddressBookDB(metaclass=ABCMeta):
     def validate_address(self, addr: Dict) -> None:
         try:
             jsonschema.validate(addr, ADDRESS_BOOK_SCHEMA)
-        except jsonschema.exceptions.ValidationError as ex:
-            raise ValueError(str(ex))
+        except jsonschema.exceptions.ValidationError:
+            raise ValueError('JSON Schema validation failed')
 
     # CRUD
 

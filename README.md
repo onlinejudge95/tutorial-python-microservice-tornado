@@ -134,3 +134,51 @@ TOTAL                             195     55     17      1    72%
 ```
 
 You might notice that there is no code coverage of `addrservice/server.py`, this is the file used to start the server. Since Torando test framework has a mechanism to start the server in the same process where tests are running, this file does not get tested by unit and integration tests. Coverage of `addrservice/app.py` will improve as you finish exercises.
+
+Now since all the plumbing is working, let's add addressbook API endpoints through two Request Handlers:
+
+`AddressBookRequestHandler`:
+
+- `GET /addressbook`: gets all addresses in the address book
+- `POST /addressbook`: create an entry in the addressbook
+
+`AddressBookEntryRequestHandler`:
+
+- `GET /addressbook/<id>`: get the address book entry with given id
+- `PUT /addressbook/<id>`: update the address book entry with given id
+- `DELETE /addressbook/<id>`: delete the address book entry with given id
+
+Here is a sample session exercising all endpoints (notice the POST response has Location in the Headers containing the URI/id `d2fbda62ee274243a3c06bc39c7a8b22` of the entry that gets created):
+```
+$ curl -X 'GET' http://localhost:8080/addressbook
+{}
+
+$ curl -i -X 'POST' -H "Content-Type: application/json" -d "@tests/data/addresses/namo.json" http://localhost:8080/addressbook
+HTTP/1.1 100 (Continue)
+HTTP/1.1 201 Created
+Server: TornadoServer/6.0.2
+Content-Type: text/html; charset=UTF-8
+Location: /addressbook/d2fbda62ee274243a3c06bc39c7a8b22
+Content-Length: 0
+
+$ curl -X 'GET' http://localhost:8080/addressbook/d2fbda62ee274243a3c06bc39c7a8b22
+{"name": "Narendra Modi", ...}
+
+$ curl -X 'GET' http://localhost:8080/addressbook
+{"d2fbda62ee274243a3c06bc39c7a8b22": {"name": "Narendra Modi", ...}
+
+$ curl -i -X 'PUT' -H "Content-Type: application/json" -d "@tests/data/addresses/raga.json" http://localhost:8080/addressbook/d2fbda62ee274243a3c06bc39c7a8b22
+HTTP/1.1 100 (Continue)
+HTTP/1.1 204 No Content
+Server: TornadoServer/6.0.2
+
+$ curl -X 'GET' http://localhost:8080/addressbook/d2fbda62ee274243a3c06bc39c7a8b22
+{"name": "Rahul Gandhi", ...}
+
+$ curl -i -X 'DELETE' http://localhost:8080/addressbook/d2fbda62ee274243a3c06bc39c7a8b22
+HTTP/1.1 204 No Content
+Server: TornadoServer/6.0.2
+
+$ curl -X 'GET' http://localhost:8080/addressbook                                       
+{}
+```
