@@ -3,10 +3,11 @@
 from abc import ABCMeta, abstractmethod
 import json
 import jsonschema  # type: ignore
+import logging
 from typing import Any, Dict
 import uuid
 
-from addrservice import ADDRESS_BOOK_SCHEMA
+from addrservice import ADDRESS_BOOK_SCHEMA, LOGGER_NAME
 
 
 class AbstractAddressBookDB(metaclass=ABCMeta):
@@ -98,6 +99,7 @@ class SomeSQLdbConnector:
 class SQLAddressBookDB(AbstractAddressBookDB):
     def __init__(self):
         self.db_connector = SomeSQLdbConnector()
+        self.logger = logging.getLogger(LOGGER_NAME)
 
     async def create_address(self, addr: Dict, nickname: str = None) -> str:
         if nickname is None:
@@ -109,6 +111,7 @@ class SQLAddressBookDB(AbstractAddressBookDB):
                    ADDRESSES (NICKNAME, ADDRESS)
                    VALUES ('{}' ,'{}')
                 '''.format(nickname, json.dumps(addr))
+        self.logger.debug('Sending DB query: {}'.format(query))
         await self.db_connector.execute(query)
         return nickname
 
@@ -116,8 +119,8 @@ class SQLAddressBookDB(AbstractAddressBookDB):
         query = '''SELECT * FROM ADDRESSES
                    WHERE NICKNAME = '{}'
                 '''.format(nickname)
+        self.logger.debug('Sending DB query: {}'.format(query))
         addr_json_str = await self.db_connector.execute(query)
-
         return json.loads(addr_json_str)
 
     async def update_address(self, nickname: str, addr: Dict) -> None:
@@ -127,12 +130,14 @@ class SQLAddressBookDB(AbstractAddressBookDB):
                    SET ADDRESS = '{}'
                    WHERE NICKNAME = '{}'
                 '''.format(json.dumps(addr), nickname)
+        self.logger.debug('Sending DB query: {}'.format(query))
         await self.db_connector.execute(query)
 
     async def delete_address(self, nickname: str) -> None:
         query = ''' DELETE FROM ADDRESS
                    WHERE NICKNAME = '{}'
                 '''.format(nickname)
+        self.logger.debug('Sending DB query: {}'.format(query))
         await self.db_connector.execute(query)
 
     async def read_all_addresses(self) -> Dict[str, Dict]:

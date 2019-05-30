@@ -7,7 +7,7 @@ Get the source code for tutorial:
 $ git clone git@github.com:scgupta/turorial-python-microservice-tornado.git
 ```
 
-Create and activate Vitual Environment:
+Need Create and activate Vitual Environment:
 ```
 $ python3 -m venv env
 $ source env/bin/activate
@@ -179,6 +179,53 @@ $ curl -i -X 'DELETE' http://localhost:8080/addressbook/d2fbda62ee274243a3c06bc3
 HTTP/1.1 204 No Content
 Server: TornadoServer/6.0.2
 
-$ curl -X 'GET' http://localhost:8080/addressbook                                       
+$ curl -X 'GET' http://localhost:8080/addressbook
 {}
 ```
+
+## Logging
+
+Logging are useful in diagnosing services, more so when async is involved. Python has a standard [logging](https://docs.python.org/3/library/logging.html) package, and its documentation includes an excellent [HOWTO](https://docs.python.org/3/howto/logging.html) guide and [Cookbook](https://docs.python.org/3/howto/logging-cookbook.html). These are rich source of information, and leave nothoing much to add. Following are some of the best practices in my opinion:
+
+- Do NOT use ROOT logger directly throgh `logging.debug()`, `logging.error()` methods directly because it is easy to overlook their default behavior.
+- Do NOT use module level loggers of variety `logging.getLogger(__name__)` because any complex project will require controlling logging through configuration (see next point). These may cause surprise if you forget to set `disable_existing_loggers` to false or overlook how modules are loaded and initialized. If use at all, call `logging.getLogger(__name__)` inside function, rather than outside at the beginning of a module.
+- `dictConfig` (in `yaml`) offers right balance of versatility and flexibility compared to `ini` based `fileConfig`or doing it code. Specifying logger in config files allows you to use different logging levels and infra in prod deployment, stage deployments, and local debugging (with increasingly more logs).
+
+Here is a part of `configs/addressbook-local.yaml` using [logging.config](https://docs.python.org/3/library/logging.config.html) syntax:
+```
+version: 1
+formatters:
+  brief:
+    format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+  detailed:
+    format: '%(asctime)s - %(name)s - %(levelname)s - %(filename)s:%(lineno)d %(funcName)s() - %(message)s'
+handlers:
+  console:
+    class: logging.StreamHandler
+    level: INFO
+    formatter: brief
+    stream: ext://sys.stdout
+  file:
+    class : logging.handlers.RotatingFileHandler
+    level: DEBUG
+    formatter: detailed
+    filename: app.log
+    backupCount: 3
+loggers:
+  addrservice:
+    level: DEBUG
+    handlers:
+      - console
+      - file
+    propagate: no
+  tornado.general:
+    level: DEBUG
+    handlers:
+      - file
+root:
+  level: WARNING
+  handlers:
+    - console
+```
+
+Notice that this configuration not just defines a logger `addrservice` for this service, but also modifies behavior of Tornado's general logger. There are several pre-defined [handlers](https://docs.python.org/3/library/logging.handlers.html). Here the SteamHandler and RotatingFileHandler are being used to write to console and log files respectively.

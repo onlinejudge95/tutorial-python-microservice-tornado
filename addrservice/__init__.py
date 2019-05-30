@@ -12,3 +12,5 @@ ADDRESS_BOOK_SCHEMA_FILE = os.path.abspath(os.path.join(
 
 with open(ADDRESS_BOOK_SCHEMA_FILE, mode='r', encoding='utf-8') as f:
     ADDRESS_BOOK_SCHEMA = json.load(f)
+
+LOGGER_NAME = 'addrservice'

@@ -2,6 +2,8 @@
 
 import argparse
 import asyncio
+import logging
+import logging.config
 import signal
 from typing import Dict
 import yaml
@@ -9,6 +11,7 @@ import yaml
 import tornado.platform.asyncio as tasyncio
 import tornado.web
 
+from addrservice import LOGGER_NAME
 from addrservice.addressbook_db import create_addressbook_db
 from addrservice.app import make_addrservice_app
 from addrservice.service import AddressBookService
@@ -52,6 +55,7 @@ def run_server(
     service: AddressBookService,
     config: Dict,
     port: int,
+    logger: logging.Logger,
     debug: bool,
 ):
     name = config['service']['name']
@@ -81,7 +85,7 @@ def run_server(
 
     http_server = app.listen(port, '', **http_server_args)
     msg = 'Starting {} on port {} ...'.format(name, port)
-    print(msg)
+    logger.info(msg)
 
     # Start event loop
     # asyncio equivalent of tornado.ioloop.IOLoop.current().start()
@@ -89,7 +93,7 @@ def run_server(
 
     # Begin shutdown after loop.stop() upon receiving signal
     msg = 'Shutting down {}...'.format(name)
-    print(msg)
+    logger.info(msg)
 
     http_server.stop()
     # Run unfinished tasks and stop event loop
@@ -99,7 +103,7 @@ def run_server(
 
     # Service stopped
     msg = 'Stopped {}.'.format(name)
-    print(msg)
+    logger.info(msg)
 
 
 def main(args=parse_args()):
@@ -108,6 +112,11 @@ def main(args=parse_args()):
     '''
 
     config = yaml.load(args.config.read(), Loader=yaml.SafeLoader)
+
+    # First thing: set logging config
+    logging.config.dictConfig(config['logging'])
+    logger = logging.getLogger(LOGGER_NAME)
+
     addr_db = create_addressbook_db(config['addr-db'])
     addr_service = AddressBookService(addr_db)
     addr_app = make_addrservice_app(addr_service, config, args.debug)
@@ -117,6 +126,7 @@ def main(args=parse_args()):
         service=addr_service,
         config=config,
         port=args.port,
+        logger=logger,
         debug=args.debug,
     )
 
