@@ -5,6 +5,7 @@ import unittest
 
 from addrservice.addressbook_db import InMemoryAddressBookDB
 from addrservice.service import AddressBookService
+import addrservice.tracing as tracing
 
 from tests.unit.address_data_test import address_data_suite
 
@@ -12,6 +13,9 @@ from tests.unit.address_data_test import address_data_suite
 class AddressBookServiceWithInMemoryDBTest(asynctest.TestCase):
     async def setUp(self) -> None:
         self.addr_db = InMemoryAddressBookDB()
+        tracing.set_trace_collectors([
+            tracing.CummulativeFunctionTimeProfiler()
+        ])
         self.service = AddressBookService(self.addr_db)
         self.service.start()
 

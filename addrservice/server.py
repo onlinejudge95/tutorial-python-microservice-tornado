@@ -12,7 +12,6 @@ import tornado.platform.asyncio as tasyncio
 import tornado.web
 
 from addrservice import LOGGER_NAME
-from addrservice.addressbook_db import create_addressbook_db
 from addrservice.app import make_addrservice_app
 from addrservice.service import AddressBookService
 
@@ -117,9 +116,7 @@ def main(args=parse_args()):
     logging.config.dictConfig(config['logging'])
     logger = logging.getLogger(LOGGER_NAME)
 
-    addr_db = create_addressbook_db(config['addr-db'])
-    addr_service = AddressBookService(addr_db)
-    addr_app = make_addrservice_app(addr_service, config, args.debug)
+    addr_service, addr_app = make_addrservice_app(config, args.debug)
 
     run_server(
         app=addr_app,

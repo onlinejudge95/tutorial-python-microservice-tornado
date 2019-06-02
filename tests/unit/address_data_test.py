@@ -4,7 +4,7 @@ import glob
 import json
 import jsonschema  # type: ignore
 import os
-from typing import Dict, List
+from typing import Dict, Sequence
 import unittest
 
 from addrservice import ADDRESS_BOOK_SCHEMA, ADDR_SERVICE_ROOT_DIR
@@ -18,7 +18,7 @@ ADDRESS_FILES = glob.glob(ADDRESS_DATA_DIR + '/*.json')
 
 
 def address_data_suite(
-    json_files: List[str] = ADDRESS_FILES
+    json_files: Sequence[str] = ADDRESS_FILES
 ) -> Dict[str, Dict]:
     addr_data_suite = {}
 

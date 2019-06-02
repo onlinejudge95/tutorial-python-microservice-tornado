@@ -46,3 +46,6 @@ logging:
     level: WARNING
     handlers:
       - console
+
+tracing:
+  addrservice.tracing.CummulativeFunctionTimeProfiler: null

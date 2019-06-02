@@ -9,8 +9,6 @@ import yaml
 from tornado.ioloop import IOLoop
 import tornado.testing
 
-from addrservice.addressbook_db import create_addressbook_db
-from addrservice.service import AddressBookService
 from addrservice.app import (
     make_addrservice_app,
     ADDRESSBOOK_ENTRY_URI_FORMAT_STR
@@ -25,6 +23,10 @@ service:
 
 addr-db:
   memory: null
+
+tracing:
+  addrservice.tracing.CummulativeFunctionTimeProfiler: null
+  addrservice.tracing.Timeline: null
 '''
 
 with StringIO(IN_MEMORY_CFG_TXT) as f:
@@ -42,18 +44,15 @@ class TestAddressServiceApp(tornado.testing.AsyncHTTPTestCase):
         self.addr1 = address_data[keys[1]]
 
     def get_app(self) -> tornado.web.Application:
-        # get_app is the hook that Tornado Test uses to get app under test
-        addr_db = create_addressbook_db(TEST_CONFIG['addr-db'])
-        addr_service = AddressBookService(addr_db)
+        addr_service, app = make_addrservice_app(
+            config=TEST_CONFIG,
+            debug=True
+        )
 
         addr_service.start()
         atexit.register(lambda: addr_service.stop())
 
-        return make_addrservice_app(
-            service=addr_service,
-            config=TEST_CONFIG,
-            debug=True
-        )
+        return app
 
     def get_new_ioloop(self):
         IOLoop.configure('tornado.platform.asyncio.AsyncIOLoop')

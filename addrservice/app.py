@@ -7,6 +7,7 @@ from typing import (
     Awaitable,
     Dict,
     Optional,
+    Tuple,
 )
 
 import tornado.web
@@ -143,12 +144,13 @@ def log_function(handler: tornado.web.RequestHandler) -> None:
 
 
 def make_addrservice_app(
-    service: AddressBookService,
     config: Dict,
     debug: bool,
     logger: logging.Logger = logging.getLogger(LOGGER_NAME)
-) -> tornado.web.Application:
-    return tornado.web.Application(
+) -> Tuple[AddressBookService, tornado.web.Application]:
+    service = AddressBookService.from_config(config)
+
+    app = tornado.web.Application(
         [
             # Heartbeat
             (r'/healthz/?', LivenessRequestHandler, dict(service=service, config=config, logger=logger)),  # noqa
@@ -163,3 +165,5 @@ def make_addrservice_app(
         # TODO: Exercise: add here suitable values for default_handler_class
         # and default_handler_args parameters to hook in DefaultRequestHandler
     )
+
+    return service, app

@@ -1,5 +1,9 @@
 {
     "python.pythonPath": "env/bin/python",
     "python.linting.flake8Enabled": true,
-    "python.linting.pylintEnabled": false
+    "python.linting.pylintEnabled": false,
+    "editor.formatOnSave": true,
+    "cSpell.words": [
+        "addrservice"
+    ]
 }

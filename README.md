@@ -229,3 +229,8 @@ root:
 ```
 
 Notice that this configuration not just defines a logger `addrservice` for this service, but also modifies behavior of Tornado's general logger. There are several pre-defined [handlers](https://docs.python.org/3/library/logging.handlers.html). Here the SteamHandler and RotatingFileHandler are being used to write to console and log files respectively.
+
+
+## Tracing
+
+Tracing is implemented throgh a decorator and a bunch of trace data collectors that can be specified in the config.
