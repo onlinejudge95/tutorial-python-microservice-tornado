@@ -1,10 +1,10 @@
 # Tutorial: Building, testing and profiling efficient micro-services using Tornado
 
-## Environment Setup
+## Pre-req: Environment Setup and Sanity Test
 
 Get the source code for tutorial:
 ```
-$ git clone git@github.com:scgupta/turorial-python-microservice-tornado.git
+$ git clone git@github.com:scgupta/tutorial-python-microservice-tornado.git
 ```
 
 Need Create and activate Vitual Environment:
@@ -14,6 +14,35 @@ $ source env/bin/activate
 $ pip install --upgrade pip
 $ pip3 install -r ./requirements.txt
 ```
+
+Verify that the source code and environment is setup correctly, first run the tests:
+```
+$ pwd
+.../turorial-python-microservice-tornado
+$ python3 ./run.py test
+```
+
+Now start the server manually:
+```
+$ python3 ./addrservice/server.py --debug --port 8080 --config ./configs/addressbook-local.yaml
+```
+
+In another terminal, watch the log file:
+```
+$ tail -f tail -f /tmp/addrservice-app.log
+```
+
+Now send a request to the server using Postman or curl to check if it is responding:
+```
+$ curl http://localhost:8080/healthz
+{"uptime": <some number>}
+$ curl http://localhost:8080/readiness
+{"ready": true, "uptime": <some number>}
+$ curl http://localhost:8080/addressbook
+{}
+```
+
+If you get these responses, you are all set for the tutorial.
 
 ## Data Model and Test Data
 
@@ -26,7 +55,7 @@ $ pwd
 $ python -m unittest discover tests -p '*_test.py'
 ```
 
-That commonad to run unit tests is quite mouthful, so a run utility in included:
+That commonad to run unit tests is quite mouthful, so a run utility is included:
 ```
 $ ./run.py test
 ```
@@ -189,7 +218,7 @@ Logging are useful in diagnosing services, more so when async is involved. Pytho
 
 - Do NOT use ROOT logger directly throgh `logging.debug()`, `logging.error()` methods directly because it is easy to overlook their default behavior.
 - Do NOT use module level loggers of variety `logging.getLogger(__name__)` because any complex project will require controlling logging through configuration (see next point). These may cause surprise if you forget to set `disable_existing_loggers` to false or overlook how modules are loaded and initialized. If use at all, call `logging.getLogger(__name__)` inside function, rather than outside at the beginning of a module.
-- `dictConfig` (in `yaml`) offers right balance of versatility and flexibility compared to `ini` based `fileConfig`or doing it code. Specifying logger in config files allows you to use different logging levels and infra in prod deployment, stage deployments, and local debugging (with increasingly more logs).
+- `dictConfig` (in `yaml`) offers right balance of versatility and flexibility compared to `ini` based `fileConfig`or doing it in code. Specifying logger in config files allows you to use different logging levels and infra in prod deployment, stage deployments, and local debugging (with increasingly more logs).
 
 Here is a part of `configs/addressbook-local.yaml` using [logging.config](https://docs.python.org/3/library/logging.config.html) syntax:
 ```
@@ -209,7 +238,7 @@ handlers:
     class : logging.handlers.RotatingFileHandler
     level: DEBUG
     formatter: detailed
-    filename: app.log
+    filename: /tmp/addrservice-app.log
     backupCount: 3
 loggers:
   addrservice:

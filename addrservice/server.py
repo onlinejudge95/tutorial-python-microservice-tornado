@@ -64,7 +64,8 @@ def run_server(
     tasyncio.AsyncIOMainLoop().install()
 
     # Register loop.stop() as signal handler
-    # In 3.6, shutting down gracefully is a lot simpler, so when we move
+    # In 3.6, shutting down gracefully is a lot simpler:
+    #
     # try:
     #     loop.run_forever()
     # finally:

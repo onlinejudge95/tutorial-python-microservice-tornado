@@ -21,7 +21,7 @@ logging:
       class : logging.handlers.RotatingFileHandler
       level: DEBUG
       formatter: detailed
-      filename: /tmp/addrservice/app.log
+      filename: /tmp/addrservice-app.log
       backupCount: 3
   loggers:
     addrservice:
