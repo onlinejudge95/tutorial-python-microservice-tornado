@@ -58,7 +58,7 @@ class DefaultRequestHandler(BaseRequestHandler):
     def prepare(self) -> Optional[Awaitable[None]]:
         raise tornado.web.HTTPError(
             self._status_code, reason=self._reason
-        )
+        ) from None
 
 
 class LivenessRequestHandler(BaseRequestHandler):
@@ -92,9 +92,11 @@ class AddressBookRequestHandler(BaseRequestHandler):
             self.set_header('Location', addr_uri)
             self.finish()
         except (json.decoder.JSONDecodeError, TypeError):
-            raise tornado.web.HTTPError(400, reason='Invalid JSON body')
+            raise tornado.web.HTTPError(
+                400, reason='Invalid JSON body'
+            ) from None
         except ValueError as e:
-            raise tornado.web.HTTPError(400, reason=str(e))
+            raise tornado.web.HTTPError(400, reason=str(e)) from None
 
 
 class AddressBookEntryRequestHandler(BaseRequestHandler):
@@ -104,7 +106,7 @@ class AddressBookEntryRequestHandler(BaseRequestHandler):
             self.set_status(200)
             self.finish(addr)
         except KeyError as e:
-            raise tornado.web.HTTPError(404, reason=str(e))
+            raise tornado.web.HTTPError(404, reason=str(e)) from None
 
     async def put(self, id):
         # TODO: Exercise: implement this method. Remove 'no_' from
@@ -118,7 +120,7 @@ class AddressBookEntryRequestHandler(BaseRequestHandler):
             self.set_status(204)
             self.finish()
         except KeyError as e:
-            raise tornado.web.HTTPError(404, reason=str(e))
+            raise tornado.web.HTTPError(404, reason=str(e)) from None
 
 
 def log_function(handler: tornado.web.RequestHandler) -> None:
