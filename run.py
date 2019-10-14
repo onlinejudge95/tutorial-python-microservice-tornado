@@ -13,7 +13,7 @@ ALL_CODE = SOURCE_CODE + TEST_CODE
 
 def arg_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description='Run linter, static type checker, tests'
+        description='Run static type checker, linter, tests'
     )
 
     subparsers = parser.add_subparsers(dest='func', help='sub-commands')
